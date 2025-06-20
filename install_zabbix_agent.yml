@@ -1,7 +1,7 @@
 ---
 - name: Install and configure Zabbix Agent on Linux
   hosts: all
-  become: true 
+  become: true
 
   vars:
     zabbix_server_ip: "172.28.4.58" # IP de tu Zabbix Proxy (VM3)
@@ -13,9 +13,9 @@
       ansible.builtin.pause:
         seconds: 3 # Ajusta el tiempo según sea necesario, más de 2 segundos.
       when: ansible_facts['distribution_major_version'] == "9" # Solo para CentOS 9 que tiene el problema de sudo password
-                                                            # No para 172.28.4.47 (CentOS 7) porque falla en el SSH login
+                                                              # No para 172.28.4.47 (CentOS 7) porque falla en el SSH login
 
-      - name: Ensure Zabbix GPG key is imported
+    - name: Ensure Zabbix GPG key is imported  # <--- Indentación corregida aquí (4 espacios desde el margen)
       ansible.builtin.rpm_key:
         state: present
         key: https://repo.zabbix.com/RPM-GPG-KEY-ZABBIX
@@ -48,7 +48,6 @@
       when: ansible_facts['distribution_major_version'] == "7"
 
     # Tarea para deshabilitar el repositorio frontend (si está presente)
-    # Útil si el archivo zabbix.repo viene con secciones de frontend.
     - name: Disable Zabbix frontend repo (if present)
       ansible.builtin.ini_file:
         path: /etc/yum.repos.d/zabbix.repo
@@ -63,8 +62,6 @@
       ansible.builtin.yum:
         name: zabbix-agent
         state: present
-      # Nota: el módulo yum seleccionará la versión correcta del agente
-      # basándose en el repositorio habilitado para la versión del SO.
 
     # Tareas para configurar el agente Zabbix
     - name: Configure Zabbix agent (zabbix_agentd.conf - Server/ServerActive)
