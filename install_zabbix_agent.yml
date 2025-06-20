@@ -9,13 +9,13 @@
 
   tasks:
     # Añadir esta pausa ANTES de que Ansible intente sudo por primera vez
+    # Esta es la tarea correcta y unificada para ambos OS.
     - name: Wait for server to be ready for sudo
       ansible.builtin.pause:
         seconds: 3 # Ajusta el tiempo según sea necesario, más de 2 segundos.
-      when: ansible_facts['distribution_major_version'] == "9" # Solo para CentOS 9 que tiene el problema de sudo password
-                                                              # No para 172.28.4.47 (CentOS 7) porque falla en el SSH login
+      when: ansible_facts['distribution_major_version'] == "9" or ansible_facts['distribution_major_version'] == "7"
 
-    - name: Ensure Zabbix GPG key is imported  # <--- Indentación corregida aquí (4 espacios desde el margen)
+    - name: Ensure Zabbix GPG key is imported
       ansible.builtin.rpm_key:
         state: present
         key: https://repo.zabbix.com/RPM-GPG-KEY-ZABBIX
@@ -47,7 +47,7 @@
         state: present
       when: ansible_facts['distribution_major_version'] == "7"
 
-    # Tarea para deshabilitar el repositorio frontend (si está presente)
+    # Tarea para deshabilitar el repositorio frontend (if present)
     - name: Disable Zabbix frontend repo (if present)
       ansible.builtin.ini_file:
         path: /etc/yum.repos.d/zabbix.repo
