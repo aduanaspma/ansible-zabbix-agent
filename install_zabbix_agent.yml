@@ -1,7 +1,7 @@
 ---
 - name: Install and configure Zabbix Agent on Linux
   hosts: all
-  become: true # Esto ejecuta las tareas con privilegios de root (sudo)
+  become: true 
 
   vars:
     zabbix_server_ip: "172.28.4.58" # IP de tu Zabbix Proxy (VM3)
@@ -15,10 +15,7 @@
       when: ansible_facts['distribution_major_version'] == "9" # Solo para CentOS 9 que tiene el problema de sudo password
                                                             # No para 172.28.4.47 (CentOS 7) porque falla en el SSH login
 
-  tasks:
-    # Tarea para importar la clave GPG de Zabbix
-    # Esta clave es generalmente la misma para diferentes versiones de Zabbix.
-    - name: Ensure Zabbix GPG key is imported
+      - name: Ensure Zabbix GPG key is imported
       ansible.builtin.rpm_key:
         state: present
         key: https://repo.zabbix.com/RPM-GPG-KEY-ZABBIX
